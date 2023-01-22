@@ -36,6 +36,7 @@ private:
     QGenericMatrix<3,3,double> Ry_mat;
     QGenericMatrix<3,3,double> Rzc2_mat;
     size_t line_width;
+    QBrush brush_bluring;
 };
 
 #endif // IMAGEGENERATOR_H

@@ -28,7 +28,6 @@ void ImageProcessor::erodeImage(const cv::Mat& cross_image)
     while (enoughPixelsInCut(result) && (iterations < 10))
     {
         cv::erode(original, result, kernel);
-        qDebug() << iterations;
         ++iterations;
         original = result.clone();
     }
@@ -59,7 +58,7 @@ bool ImageProcessor::enoughPixelsInCut(const cv::Mat &image)
         qWarning() << "Errors while scanning image for erosion";
         return true;
     }
-//    qDebug() << "number of pixels in cut" << pixels_in_cut;
+    qDebug() << "number of pixels in cut" << pixels_in_cut;
 //    qDebug() << "pixels_in_cut_total" << pixels_in_cut_total;
     if (pixels_in_cut < pixels_in_cut_total) return false;
     return true;

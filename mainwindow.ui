@@ -37,7 +37,7 @@
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Tab 1</string>
+        <string>Иммитация</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,1">
         <property name="spacing">
@@ -57,6 +57,18 @@
         </property>
         <item>
          <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
            <string>TextLabel</string>
           </property>
@@ -259,11 +271,14 @@
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
-        <string>Tab 2</string>
+        <string>Обработка</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,1">
         <property name="spacing">
          <number>2</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <property name="leftMargin">
          <number>5</number>
@@ -289,13 +304,13 @@
           <item>
            <widget class="QGroupBox" name="groupBox">
             <property name="title">
-             <string>GroupBox</string>
+             <string>Доступные действия</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
               <widget class="QPushButton" name="btn_start_proc">
                <property name="text">
-                <string>PushButton</string>
+                <string>Подгрузить из окна &quot;Иммитация&quot;</string>
                </property>
               </widget>
              </item>

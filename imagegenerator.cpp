@@ -5,6 +5,9 @@
 #include <QPainterPath>
 
 #include <cmath>
+Q_GUI_EXPORT void qt_blurImage( QImage& blurImage, qreal radius, bool quality, int transposed = 0 );
+Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0);
+
 
 using namespace std;
 ImageGenerator::ImageGenerator(double focal_length, double number_of_points, QSize img_size, double alpha1, double beta):
@@ -30,6 +33,14 @@ ImageGenerator::ImageGenerator(double focal_length, double number_of_points, QSi
     Ry_mat = QGenericMatrix<3,3,double>{ry_values};
     double falling_beam_values[] = {0,0,-1};
     falling_beam_mat = QGenericMatrix<1,3,double>{falling_beam_values};
+//    // Brush settings
+//    QRadialGradient grad(QPointF(0,0), 500);
+//    grad.setColorAt(0,Qt::white);
+//    grad.setColorAt(5,Qt::black);
+
+//    brush_bluring = QBrush(grad);
+//    brush_bluring.setStyle(Qt::RadialGradientPattern);
+//    brush_bluring.setColor(Qt::white);
 }
 
 ImageGenerator::ImageGenerator(double focal_length, double number_of_points, QSize img_size, double alpha1, double alpha2, double beta):
@@ -56,6 +67,9 @@ ImageGenerator::ImageGenerator(double focal_length, double number_of_points, QSi
     Ry_mat = QGenericMatrix<3,3,double>{ry_values};
     double falling_beam_values[] = {0,0,-1};
     falling_beam_mat = QGenericMatrix<1,3,double>{falling_beam_values};
+    // Brush settings
+    brush_bluring = QBrush(Qt::white,Qt::RadialGradientPattern);
+
 }
 
 ImageGenerator::~ImageGenerator()
@@ -111,10 +125,10 @@ QImage ImageGenerator::generate_image(double t1, double t2, double t3)
         pt132 = QPointF(focal_length * (B132(0,0)) / (B132(2,0)) ,
                         focal_length * qTan(qAsin(B132(1,0))));
 
-        pts_horizontal.push_back(pt231);
-        pts_horizontal.push_front(pt132);
-        pts_vertical.push_back(pt123);
-        pts_vertical.push_front(pt321);
+        pts_vertical.push_back(pt231);
+        pts_vertical.push_front(pt132);
+        pts_horizontal.push_back(pt123);
+        pts_horizontal.push_front(pt321);
     }
 
     // Draw image
@@ -146,10 +160,16 @@ QImage ImageGenerator::generate_image(double t1, double t2, double t3)
         horizontal_line.lineTo(pt);
     }
 
-    painter.setPen(Qt::white);
-    painter.strokePath(vertical_line,QPen(Qt::white,line_width));
-    painter.strokePath(horizontal_line,QPen(Qt::white,line_width));
+    painter.setPen(QPen(Qt::white,line_width));
 
+    QConicalGradient gradient;
+            gradient.setCenter(result.rect().center());
+            gradient.setAngle(90);
+            gradient.setColorAt(1.0, Qt::black);
+            gradient.setColorAt(0.0, Qt::white);
+
+            auto p = QPen(gradient, 4.0);
+            painter.setPen(p);
     painter.drawPath(horizontal_line);
     painter.drawPath(vertical_line);
 
