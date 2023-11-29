@@ -31,7 +31,7 @@ public slots:
     {
         if ((angle >= -max_value) && (angle <= max_value)) {
             if (going_up) angle++;
-            else angle --;
+            else angle--;
         }
         else {
             if (angle > max_value) {
@@ -72,8 +72,10 @@ private slots:
     void animate();
     void on_btn_animate_reset_clicked();
     void on_save_image();
+    void change_line_width(int);
     void process();
-
+    double count_angle_1();
+    void set_lines_numbers();
 private:
     Ui::MainWindow *ui;
     ImageGenerator gen;

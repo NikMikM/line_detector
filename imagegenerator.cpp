@@ -3,13 +3,15 @@
 #include <QGenericMatrix>
 #include <QPainter>
 #include <QPainterPath>
-
+#include "angledeterminer1.h"
 #include <cmath>
+#include <random>
+
 Q_GUI_EXPORT void qt_blurImage( QImage& blurImage, qreal radius, bool quality, int transposed = 0 );
 Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0);
 
-
 using namespace std;
+
 ImageGenerator::ImageGenerator(double focal_length, double number_of_points, QSize img_size, double alpha1, double beta):
     focal_length {focal_length},
     number_of_points {number_of_points},
@@ -82,8 +84,8 @@ void ImageGenerator::set_rotation_matrix(double t1, double t2, double t3)
     t2 = qDegreesToRadians(t2);
     t3 = qDegreesToRadians(t3);
     double values2[] = {qCos(t2) * qCos(t3), -qCos(t2) * qSin(t3),qSin(t2),
-                        qCos(t1) * qSin(t3) + qCos(t3) * qSin(t1) * qSin(t2), qCos(t1) * qCos(t3) - qSin(t1) *qSin(t2) *qSin(t3), -qCos(t2) * qSin(t1),
-                        qSin(t1) * qSin(t3) - qCos(t1) *qCos(t3) * qSin(t2), qCos(t3) * qSin(t1) + qCos(t1) * qSin(t2) *qSin(t3), qCos(t1) * qCos(t2)
+                        qCos(t1) * qSin(t3) + qCos(t3) * qSin(t1) * qSin(t2), qCos(t1) * qCos(t3) - qSin(t1) * qSin(t2) * qSin(t3), -qCos(t2) * qSin(t1),
+                        qSin(t1) * qSin(t3) - qCos(t1) *qCos(t3) * qSin(t2), qCos(t3) * qSin(t1) + qCos(t1) * qSin(t2) * qSin(t3), qCos(t1) * qCos(t2)
                        };
     rotation_mat = QGenericMatrix<3,3,double>{values2};
 }
@@ -139,7 +141,7 @@ QImage ImageGenerator::generate_image(double t1, double t2, double t3)
     // Translate, scale and change coordinate system to decard
     painter.translate(image_size.width()/2,image_size.width()/2);
 
-    int scale_factor = image_size.width() / (2 * abs(pts_horizontal[0].y()));
+    double scale_factor = 6;//image_size.width() / (2 * abs(pts_horizontal[0].y()));
 
     for(QPointF& pt : pts_horizontal){
         pt = QPointF(pt.x() * scale_factor, -pt.y() * scale_factor);
@@ -161,17 +163,42 @@ QImage ImageGenerator::generate_image(double t1, double t2, double t3)
     }
 
     painter.setPen(QPen(Qt::white,line_width));
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::VerticalSubpixelPositioning | QPainter::NonCosmeticBrushPatterns);
+//    painter.setRenderHint(QPainter::NonCosmeticBrushPatterns);
+//    painter.setRenderHint(QPainter::VerticalSubpixelPositioning);
 
-    QConicalGradient gradient;
-            gradient.setCenter(result.rect().center());
-            gradient.setAngle(90);
-            gradient.setColorAt(1.0, Qt::black);
-            gradient.setColorAt(0.0, Qt::white);
+//    QConicalGradient gradient;
+//            gradient.setCenter(result.rect().center());
+//            gradient.setAngle(90);
+//            gradient.setColorAt(1.0, Qt::black);
+//            gradient.setColorAt(0.0, Qt::white);
 
-            auto p = QPen(gradient, 4.0);
-            painter.setPen(p);
+//            auto p = QPen(gradient, 4.0);
+//            painter.setPen(p);
+    //Drawing
+    if (visible_lines & FIRST)
     painter.drawPath(horizontal_line);
+    if(visible_lines & SECOND)
     painter.drawPath(vertical_line);
 
+//    std::random_device rd;  // a seed source for the random number engine
+//    std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
+//    std::uniform_int_distribution<> distrib(0,50);
+//    for(auto i = 0; i < image_size.width(); i++)
+//    {
+//    for(auto j = 0; j < image_size.height();j++) {
+//        auto num = distrib(gen);
+//        const auto in_pix = result.pixel(i,j);
+//        if( in_pix + num < 255)
+//            result.setPixel(i,j,in_pix + num);
+
+//    }
+//    }
     return result;
 }
+
+//void ImageGenerator::unset_visible_lines()
+//{
+//    visible_lines = 0;
+//}
+

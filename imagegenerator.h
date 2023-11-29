@@ -11,6 +11,11 @@ class ImageGenerator
 {
     Q_PROPERTY(size_t lineWidth READ get_line_width WRITE set_line_width CONSTANT )
 public:
+    enum LINES {
+        FIRST = 1,
+        SECOND = 2,
+        THIRD = 4
+    };
     ImageGenerator(double focal_length,double number_of_points, QSize img_size,double alpha1, double beta);
     ImageGenerator(double focal_length,double number_of_points, QSize img_size,double alpha1, double alpha2, double beta);
     ~ImageGenerator();
@@ -21,6 +26,17 @@ public:
 
     QGenericMatrix<3,3,double> Rzc_matrix(double alpha, double delta);
     QImage generate_image(double t1, double t2, double t3);
+
+    //Function for deciding which lines will be shown (with differenet alpha, they may change orientation)
+    template<typename ...Args>
+    void set_visible_lines(Args&&... args)
+    {
+        ((visible_lines += static_cast<int>(args)),...);
+    }
+
+    void unset_visible_lines(){
+        visible_lines = 0;
+    }
 private:
     double focal_length;
     double number_of_points;
@@ -37,6 +53,7 @@ private:
     QGenericMatrix<3,3,double> Rzc2_mat;
     size_t line_width;
     QBrush brush_bluring;
+    int visible_lines;
 };
 
 #endif // IMAGEGENERATOR_H
